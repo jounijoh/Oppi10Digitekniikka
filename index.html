@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>amazing world</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+    <!-- GRT Youtube Plugin CSS -->
+    <link rel="stylesheet" href="css/grt-responsive-menu.css">
+
+    <!-- Jquery -->
+    <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
+    <script src="js/grt-responsive-menu.js"></script>
+
+    <!-- SLIDER-->
+    <link href="css/jquery.bxslider.css" rel="stylesheet">
+
+
+
+
+</head>
+
+<body>
+    <header>
+        <div class="menu-container">
+            <div class="row no-margin">
+                <div class="col-sm-4 col-xs-6 no-padding">
+                    <a href="#" class="grt-logo"><img src="images/animal-g3948b10b1_1920.jpg"></a>
+                </div>
+                <div class="col-sm-8 col-xs-6 no-padding">
+                    <nav>
+                        <button class="grt-mobile-button">
+                            <div class="line1"></div>
+                            <div class="line2"></div>
+                            <div class="line3"></div>
+                        </button>
+                        <ul class="grt-menu">
+
+                            <li class="active"><a href="index.html">Home</a></li>
+                            <li class="active"><a href="galleria.html">Galleria</a></li>
+                            <li class="active"><a href="liikenne.html">Liikenne</a></li>
+
+
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </header>
+    <br />
+    <br />
+    <br />
+
+
+    <div class="container">
+        <h1 id="otsikko">Kerro Kuulumisesi</h1>
+        <div class="row justify-content-md-center">
+            <div class="col">
+                <h2>Viesti:</h2>
+                <textarea id="tekstikenttä" name="tekstikenttä"></textarea><br>
+                <button name="laheta" id="lähetä">Lähetä</button>
+            </div>
+            <div class="col" id="viestiketju">
+                <h2>Viestit</h2>
+
+            </div>
+        </div>
+    </div>
+
+
+    <script src="https://www.gstatic.com/firebasejs/3.3.0/firebase.js"></script>
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.14.0/firebase-app.js";
+        import { onChildAdded, push, getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/9.14.0/firebase-database.js";
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+
+        // Your web app's Firebase configuration
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAJ5W1tmskxqBOLRL0Qke4wIkF7LP5FnGE",
+            authDomain: "digitry-95f59.firebaseapp.com",
+            databaseURL: "https://digitry-95f59-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "digitry-95f59",
+            storageBucket: "digitry-95f59.appspot.com",
+            messagingSenderId: "1037640854422",
+            appId: "1:1037640854422:web:09dfed89d7f8d44d050bb7"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase();
+        const rootRef = ref(db, "viestit");
+        const newViestiRef = push(rootRef)
+
+        function laheta() {
+            var txt = document.getElementById("tekstikenttä").value
+            //push(ref(db, "viestit"), {
+            set(newViestiRef, {
+                viesti: txt
+            });
+            const viestitRef = ref(db, "viestit");
+            // Hakee kaikkiviestit, mutta toimii jotenkin 
+            onValue(viestitRef, (snapshot) => {
+            snapshot.forEach((childSnapshot) => {
+                const childKey = childSnapshot.key;
+                const childData = childSnapshot.val();
+                $("#viestiketju").append("<p>" + childData.viesti + "</p>");
+            });
+        }, {
+            onlyOnce: true
+        });
+        }
+        document.getElementById('lähetä').addEventListener('click', laheta);
+
+        // otsikko firebasesta
+        const headingRef = ref(db, "heading");
+        onValue(headingRef, (snapshot) => {
+            const data = snapshot.val();
+            document.getElementById("otsikko").innerHTML = data;
+        })
+
+
+
+    </script>
+
+
+</body>
+
+
+</html>
